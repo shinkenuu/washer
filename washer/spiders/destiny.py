@@ -23,7 +23,7 @@ class MapleDestinySpider(scrapy.Spider):
         if response.status == 200 and MapleDestinySpider.username in response.text:
             print('Login successful')
 
-            yield scrapy.Request(
+            return scrapy.Request(
                 url=MapleDestinySpider.crawl_spots['vote'],
                 callback=self.parse_vote
             )
