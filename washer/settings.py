@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for washer_ project
+# Scrapy settings for washer project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,17 +9,17 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'washer_'
+BOT_NAME ='washer'
 
-SPIDER_MODULES = ['washer_.spiders']
-NEWSPIDER_MODULE = 'washer_.spiders'
+SPIDER_MODULES = ['washer.spiders']
+NEWSPIDER_MODULE = 'washer.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'washer_ (+http://www.yourdomain.com)'
+#USER_AGENT = 'washer (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -47,13 +47,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'washer_.middlewares.WasherSpiderMiddleware': 543,
+#    'washer.middlewares.WasherSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'washer_.middlewares.WasherDownloaderMiddleware': 543,
+#    'washer.middlewares.WasherDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -65,7 +65,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'washer_.pipelines.WasherPipeline': 300,
+#    'washer.pipelines.WasherPipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)

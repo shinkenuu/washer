@@ -2,7 +2,7 @@
   "servers": [
     {
       "name": "MapleDestiny",
-      "urls": {
+      "crawl_spots": {
         "login": "http://mapledestiny.net/login/",
         "vote": "http://mapledestiny.net/vote/"
       },

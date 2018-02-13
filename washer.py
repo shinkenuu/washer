@@ -1,17 +1,33 @@
 import json
+from os.path import dirname, join, realpath
+
+from scrapy.crawler import CrawlerProcess
+
+
+from washer.spiders.destiny import MapleDestinySpider
 
 
 if __name__ == '__main__':
-    with open('oracle.json') as file:
-        oracle = json.load(file)
+    with open(join(dirname(realpath(__file__)), 'oracle.json'), 'r') as json_file:
+        oracle = json.load(json_file)
 
-    with Browser() as browser:
+    process = CrawlerProcess({
+        'USER_AGENT': 'Mozilla/5.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+    })
 
-        for server in oracle['servers']:
+    spider_dict = {
+        'MapleDestiny': MapleDestinySpider
+    }
 
-            for credential in server['credentials']:
+    for server in oracle['servers']:
 
-                login_url = server['urls']['login']
-                vote_url = server['urls']['vote']
+        spider = spider_dict[server['name']]
+        spider.crawl_spots = server['crawl_spots']
 
-                login_and_vote(login_url=login_url, vote_url=vote_url, credential=credential)
+        for credential in server['credentials']:
+
+            spider.username = credential['username']
+            spider.password = credential['password']
+
+            process.crawl(spider)
+            process.start()
