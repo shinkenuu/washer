@@ -3,8 +3,7 @@ from os.path import dirname, join, realpath
 
 from scrapy.crawler import CrawlerProcess
 
-
-from washer.spiders.destiny import MapleDestinySpider
+from washer.spiders.destiny import WasherSpider
 
 
 if __name__ == '__main__':
@@ -15,13 +14,9 @@ if __name__ == '__main__':
         'USER_AGENT': 'Mozilla/5.0 (compatible; MSIE 7.0; Windows NT 5.1)'
     })
 
-    spider_dict = {
-        'MapleDestiny': MapleDestinySpider
-    }
-
     for server in oracle['servers']:
 
-        spider = spider_dict[server['name']]
+        spider = WasherSpider
         spider.crawl_spots = server['crawl_spots']
 
         for credential in server['credentials']:

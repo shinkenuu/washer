@@ -1,30 +1,26 @@
-import scrapy
-from scrapy import FormRequest
+from scrapy import FormRequest, Spider, Request
 
 
-class MapleDestinySpider(scrapy.Spider):
-    name = 'mapledestiny'
+class WasherSpider(Spider):
+    name = 'washer'
 
-    username = None
-    password = None
+    username = ''
+    password = ''
 
-    crawl_spots = {
-        #'login': 'http://mapledestiny.net/login/',
-        #'vote': 'http://mapledestiny.net/vote/'
-    }
+    crawl_spots = {}
 
     def start_requests(self):
-        yield scrapy.Request(
-            url=MapleDestinySpider.crawl_spots['login'],
+        yield Request(
+            url=WasherSpider.crawl_spots['login'],
             callback=self.parse_login
         )
 
     def login_callback(self, response):
-        if response.status == 200 and MapleDestinySpider.username in response.text:
+        if response.status == 200 and WasherSpider.username in response.text:
             print('Login successful')
 
-            return scrapy.Request(
-                url=MapleDestinySpider.crawl_spots['vote'],
+            return Request(
+                url=WasherSpider.crawl_spots['vote'],
                 callback=self.parse_vote
             )
 
@@ -35,8 +31,8 @@ class MapleDestinySpider(scrapy.Spider):
             response,
             formxpath='//form[@class="form-signin"]',
             formdata={
-                'username': MapleDestinySpider.username,
-                'password': MapleDestinySpider.password
+                'username': WasherSpider.username,
+                'password': WasherSpider.password
             },
             clickdata={
                 'type': 'submit'
@@ -45,7 +41,7 @@ class MapleDestinySpider(scrapy.Spider):
         )
 
     def vote_callback(self, response):
-        if response.status == 200 and MapleDestinySpider.name not in response.url:
+        if response.status == 200 and WasherSpider.name not in response.url:
             print('Vote successful')
             return
 
