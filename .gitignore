@@ -1,2 +1,3 @@
 .idea/
-geckodriver.log
+app/populate_db.py
+run.sh
