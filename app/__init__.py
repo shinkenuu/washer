@@ -1,6 +1,6 @@
 from os import environ
 
-from flask import Flask
+from flask import Flask, jsonify
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -20,3 +20,9 @@ migrate = Migrate(app, db)
 #db.create_all()
 from app import database
 database.init_db()
+
+from app.views import *
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return jsonify(error=404, text='Resource not found'), 404

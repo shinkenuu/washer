@@ -40,10 +40,10 @@ class CrawlFormFactory(SQLAlchemyModelFactory):
         model = CrawlForm
         sqlalchemy_session = db_session
 
-    formid = 0
+    formid = '0'
     name = 'form_name'
     xpath = '//element[@attr="value"]'
     data = {'form_key': 'form_value'}
     click_data = {'click_key': 'click_value'}
 
-    spot = SubFactory(CrawlSpot)
+    spot = SubFactory(CrawlSpotFactory)

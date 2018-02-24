@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import abort, jsonify
 
 from app import app
 from app.models import Server
@@ -9,8 +9,12 @@ def vote(server_name):
     server = Server.query.filter_by(name=server_name).first()
 
     if not server:
-        return jsonify(error='server name not found'), 404
+        abort(404)
 
     credential_to_vote = server.next_to_vote
 
-    return jsonify(credential_to_vote.__dict__)
+    response = {
+        'credential_that_voted': dict(credential_to_vote)
+    }
+
+    return jsonify(response), 200

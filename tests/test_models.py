@@ -1,4 +1,3 @@
-from copy import deepcopy
 from datetime import datetime
 from unittest import TestCase
 
@@ -25,7 +24,7 @@ class ServerTests(TestCase):
 class CrawlFormTests(TestCase):
     def test_interpretation(self):
         form = CrawlFormFactory(
-            name='__server__.name', # Just to test multiple dynamic keys
+            name='__server__.name',  # Just to test multiple dynamic keys
             data={
                      'username': '__credential__.username'
             },
@@ -37,21 +36,18 @@ class CrawlFormTests(TestCase):
 
         interpreted_form = form.interpret(credential=credential, server=server)
 
-        expected_form = deepcopy(form)
-
-        expected_form.name = server.name
-        expected_form.data = {'username': credential.username},
-        expected_form.xpath = '//__any_key__'
-
-        self.assertEqual(expected_form, interpreted_form)
-
+        self.assertEqual(interpreted_form.name, server.name)
+        self.assertEqual(interpreted_form.data, {'username': credential.username})
+        self.assertEqual(interpreted_form.xpath, '//__any_key__')
 
     def test_property_to_scrapy_form(self):
-        scrapy_form_args = ['formname', 'formxpath', 'formcss', 'formnumber', 'formdata', 'clickdata', 'dontlick']
+        scrapy_form_args = [
+            'formid', 'formname', 'formxpath', 'formcss', 'formnumber',
+            'formdata', 'clickdata', 'dontlick']
 
         form = CrawlFormFactory()
 
-        parsed_form = form.to_scrapy_form
+        parsed_form = form.to_scrapy_form()
 
         for key in parsed_form.keys():
             self.assertIn(key, scrapy_form_args)

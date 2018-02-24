@@ -31,6 +31,11 @@ class Credential(Base):
     server_id = Column(Integer, ForeignKey('server.id'), nullable=False)
     server = relationship('Server', backref='credentials')
 
+    def __iter__(self):
+        columns = ['id', 'username', 'password', 'able_to_vote', 'last_vote_datetime', 'server_id']
+        for column in columns:
+            yield (column, self.__getattribute__(column))
+
 
 class CrawlSpot(Base):
     __tablename__ = 'crawl_spot'
@@ -66,30 +71,56 @@ class CrawlForm(Base):
         :return: the interpreted form
         """
         if not kwargs:
-            raise KeyError
-
-        interpreted_form = CrawlForm()
+            return self
 
         columns = ['formid', 'name', 'xpath', 'number', 'data', 'click_data']
+
+        # --------- Copy self without sqlalchemy attrs ----------------------
+        # ---------------------------------------------------------------------
+        interpreted_form = CrawlForm()
+        for column in columns:
+            interpreted_form.__setattr__(column, self.__getattribute__(column))
+        # ---------------------------------------------------------------------
 
         for static_key, dynamic_value in kwargs.items():
             dunder_static_key = '__' + static_key + '__'
 
             for column in columns:
+                if not interpreted_form.__getattribute__(column):
+                    continue
 
-                if dunder_static_key in self.__getattribute__(column):
-                    interpreted_form.__setattr__(
-                        column,
-                        eval(self.column.replace(dunder_static_key, str(dynamic_value))))
+                column_value = interpreted_form.__getattribute__(column)
+
+                if isinstance(column_value, str):
+                    if dunder_static_key in column_value:
+                        interpreted_form.__setattr__(
+                            column,
+                            eval(column_value.replace(dunder_static_key, 'dynamic_value')))
+
+                elif isinstance(column_value, dict):
+                    interpreted_dict = {}
+
+                    for key, value in column_value.items():
+                        interpreted_key = key
+                        interpreted_value = value
+
+                        if isinstance(key, str) and dunder_static_key in key:
+                            interpreted_key = eval(key.replace(dunder_static_key, 'dynamic_value'))
+
+                        if isinstance(value, str) and dunder_static_key in value:
+                            interpreted_value = eval(value.replace(dunder_static_key, 'dynamic_value'))
+
+                        interpreted_dict[interpreted_key] = interpreted_value
+
+                    interpreted_form.__setattr__(column, interpreted_dict)
 
         return interpreted_form
 
-    @property
-    def to_scrapy_form(self):
+    def to_scrapy_form(self, **kwargs):
         """
         Parse values into scrapy.FormRequest arguments
         """
-        interpreted_form = self.interpret()
+        interpreted_form = self.interpret(**kwargs)
 
         return {
             'formid': interpreted_form.formid,
