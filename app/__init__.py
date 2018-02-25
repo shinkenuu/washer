@@ -1,6 +1,6 @@
 from os import environ
 
-from flask import Flask, jsonify
+from flask import Flask
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -17,7 +17,6 @@ migrate = Migrate(app, db)
 # Build the database:
 # This will create the database file using SQLAlchemy
 
-#db.create_all()
 from app import database
 database.init_db()
 

@@ -1,5 +1,9 @@
+from mock import mock
 from unittest import TestCase
 import json
+
+from scrapy import Spider
+from scrapy.crawler import CrawlerProcess
 
 from app import app
 from app.database import db_session
@@ -40,5 +44,12 @@ class ViewTests(TestCase):
 
         self.assertEqual(next_to_vote_credential.username, json_response['credential_that_voted']['username'])
 
-    def test_view_is_calling_scrapy(self):
-        raise NotImplemented
+    @mock.patch('app.utils.prepare_spider', side_effect=Spider(name='mocked'))
+    @mock.patch.object(CrawlerProcess, 'crawl')
+    def test_view_is_calling_scrapy(self, mocked_crawl, mocked_prepare_spider):
+        CredentialFactory(server__name='server_name')
+        db_session.flush()
+
+        self.app.get('/server_name')
+
+        mocked_crawl.assert_called_once()
