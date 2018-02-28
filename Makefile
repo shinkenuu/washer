@@ -9,5 +9,8 @@ help: ## Show this help message.
 runserver:
 	flask run
 
+db:
+    flask db
+
 test:
 	pytest ./tests/
