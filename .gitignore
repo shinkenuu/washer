@@ -1,4 +1,3 @@
 .idea/
 *__pycache__*
 .pytest_cache/
-app/populate_db.py
