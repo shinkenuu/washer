@@ -3,8 +3,7 @@ from unittest import TestCase
 from app.database import db_session
 from app.utils import prepare_spider
 from crawlers.crawlers.spiders.destiny import WasherSpider
-
-from tests.model_factories import CredentialFactory, CrawlFormFactory, CrawlSpotFactory, ServerFactory
+from tests.app.model_factories import CredentialFactory, CrawlFormFactory, CrawlSpotFactory, ServerFactory
 
 
 class UtilsTests(TestCase):

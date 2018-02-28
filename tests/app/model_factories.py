@@ -18,7 +18,7 @@ class CredentialFactory(SQLAlchemyModelFactory):
         model = Credential
         sqlalchemy_session = db_session
 
-    username = 'username'
+    username = Sequence(lambda n: 'username_' + str(n))
     password = 'secret'
 
     server = SubFactory(ServerFactory)
@@ -43,6 +43,7 @@ class CrawlFormFactory(SQLAlchemyModelFactory):
     formid = '0'
     name = 'form_name'
     xpath = '//element[@attr="value"]'
+    number = 0
     data = {'form_key': 'form_value'}
     click_data = {'click_key': 'click_value'}
 

@@ -2,7 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 from app.database import db_session
-from tests.model_factories import CrawlFormFactory, CredentialFactory, ServerFactory
+from tests.app.model_factories import CrawlFormFactory, CredentialFactory, ServerFactory
 
 
 class ServerTests(TestCase):
