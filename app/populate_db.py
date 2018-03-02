@@ -58,4 +58,4 @@ def populate_db():
         CREDENTIALS
     )
 
-    db_session.flush()
+    db_session.commit()
