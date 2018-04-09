@@ -118,7 +118,7 @@ class CrawlForm(Base):
 
     def to_scrapy_form(self, **kwargs):
         """
-        Parse values into scrapy.FormRequest arguments
+        Parse values into crawlers.FormRequest arguments
         """
         interpreted_form = self.interpret(**kwargs)
 

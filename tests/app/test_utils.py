@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from app.database import db_session
 from app.utils import prepare_spider
-from crawlers.crawlers.spiders.destiny import WasherSpider
+from crawlers.crawlers import WasherSpider
 from tests.app.model_factories import CredentialFactory, CrawlFormFactory, CrawlSpotFactory, ServerFactory
 
 

@@ -1,10 +1,10 @@
 from flask import abort, jsonify
-from scrapy.crawler import CrawlerProcess
+from crawlers.crawler import CrawlerProcess
 
 from app import app
 from app.models import Server
 from app.utils import prepare_spider
-from crawlers.crawlers.spiders.destiny import WasherSpider
+from crawlers.crawlers import WasherSpider
 
 
 @app.route('/<server_name>', methods=['GET'])

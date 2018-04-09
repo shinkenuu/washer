@@ -2,8 +2,8 @@ import json
 from unittest import TestCase
 
 from mock import mock
-from scrapy import Spider
-from scrapy.crawler import CrawlerProcess
+from crawlers import Spider
+from crawlers.crawler import CrawlerProcess
 
 from app import app
 from app.database import db_session
