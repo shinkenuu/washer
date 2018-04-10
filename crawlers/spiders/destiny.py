@@ -3,8 +3,8 @@ from scrapy import FormRequest, Spider, Request
 from crawlers.exceptions import LoginFailed, UnableToVote
 
 
-class WasherSpider(Spider):
-    name = 'washer'
+class DestinySpider(Spider):
+    name = 'destiny'
 
     def __init__(self, credential: dict, urls: dict, **kwargs):
         if {'username', 'password'} > set(credential.keys()):
@@ -59,7 +59,7 @@ class WasherSpider(Spider):
 
     def login_callback(self, response):
         if not self.is_logged_in(response):
-            raise LoginFailed(server='destiny', username=self.credential['username'])
+            raise LoginFailed(server_name='destiny', username=self.credential['username'])
 
         return Request(url=self.urls['vote'], callback=self.vote)
 
@@ -70,7 +70,7 @@ class WasherSpider(Spider):
         :return: a generator with a FormRequest for each available vote form
         """
         if not self.can_vote(response):
-            raise UnableToVote(server='destiny', username=self.credential['username'])
+            raise UnableToVote(server_name='destiny', username=self.credential['username'])
 
         forms_kwargs = []
 

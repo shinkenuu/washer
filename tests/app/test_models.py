@@ -1,53 +1,35 @@
 from datetime import datetime
-from unittest import TestCase
+
+from freezegun import freeze_time
 
 from app.database import db_session
-from tests.app.model_factories import CrawlFormFactory, CredentialFactory, ServerFactory
+from tests.app.model_factories import CredentialFactory, ServerFactory
 
 
-class ServerTests(TestCase):
-    def test_property_next_to_vote(self):
-        server = ServerFactory()
+def test_property_all_able_to_vote_credentials(self):
+    server = ServerFactory()
 
-        next_to_vote_cred = CredentialFactory(username='user1', server=server,
-                                              last_vote_datetime=datetime(2017, 1, 1))
-        unable_to_vote_cred = CredentialFactory(username='user2', server=server, able_to_vote=False,
-                                                last_vote_datetime=datetime(2017, 1, 1))
-        latest_to_vote_cred = CredentialFactory(username='user3', server=server,
-                                                last_vote_datetime=datetime(2018, 1, 1))
+    next_to_vote_cred = CredentialFactory(server=server, able_to_vote=True)
+    unable_to_vote_cred = CredentialFactory(server=server, able_to_vote=False)
+    last_to_vote_cred = CredentialFactory(server=server, able_to_vote=True, last_vote_datetime=datetime(year=2016))
 
-        db_session.flush()
+    db_session.flush()
 
-        self.assertEqual(server.next_to_vote, next_to_vote_cred)
+    self.assertEqual(set(server.all_able_to_vote_credentials), {next_to_vote_cred, last_to_vote_cred})
 
 
-class CrawlFormTests(TestCase):
-    def test_interpretation(self):
-        form = CrawlFormFactory(
-            name='__server__.name',  # Just to test multiple dynamic keys
-            data={
-                     'username': '__credential__.username'
-            },
-            xpath='//__any_key__',
-        )
+@freeze_time('2018-01-01')
+def test_property_all_credentials_available_to_vote(self):
+    server = ServerFactory()
 
-        server = ServerFactory()
-        credential = CredentialFactory()
+    unable_to_vote = CredentialFactory(server=server, able_to_vote=False)
+    latest_to_vote = CredentialFactory(server=server, able_to_vote=True, last_vote_datetime=datetime.utcnow())
+    first_to_vote = CredentialFactory(server=server, able_to_vote=True,
+                                      last_vote_datetime=datetime(year=2017, month=1, day=1))
+    second_to_vote = CredentialFactory(server=server, able_to_vote=True,
+                                       last_vote_datetime=datetime(year=2017, month=2, day=1))
+    third_to_vote = CredentialFactory(server=server, able_to_vote=True,
+                                      last_vote_datetime=datetime(year=2017, month=3, day=1))
 
-        interpreted_form = form.interpret(credential=credential, server=server)
-
-        self.assertEqual(interpreted_form.name, server.name)
-        self.assertEqual(interpreted_form.data, {'username': credential.username})
-        self.assertEqual(interpreted_form.xpath, '//__any_key__')
-
-    def test_property_to_scrapy_form(self):
-        scrapy_form_args = [
-            'formid', 'formname', 'formxpath', 'formcss', 'formnumber',
-            'formdata', 'clickdata', 'dontlick']
-
-        form = CrawlFormFactory()
-
-        parsed_form = form.to_scrapy_form()
-
-        for key in parsed_form.keys():
-            self.assertIn(key, scrapy_form_args)
+    db_session.flush()
+    self.assertEqual(server.all_credentials_available_to_vote, [first_to_vote, second_to_vote, third_to_vote])

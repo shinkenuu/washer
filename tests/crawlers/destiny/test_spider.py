@@ -10,7 +10,7 @@ def create_spider_response(html_filename, url=None):
 
 @pytest.fixture
 def destiny_spider_fixture():
-    from crawlers.spiders.destiny import WasherSpider
+    from crawlers.spiders.destiny import DestinySpider
 
     urls = {
         'login': 'http://www.site.net/login',
@@ -22,7 +22,7 @@ def destiny_spider_fixture():
         'password': 'password_entered'
     }
 
-    return WasherSpider(credential=credential, urls=urls)
+    return DestinySpider(credential=credential, urls=urls)
 
 
 def test_login_form_request(destiny_spider_fixture):
