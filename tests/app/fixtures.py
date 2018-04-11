@@ -3,8 +3,8 @@ from datetime import datetime
 from factory import SubFactory, Sequence
 from factory.alchemy import SQLAlchemyModelFactory
 
-from app.database import db_session
 from app.models import Credential, Server
+from app.database import db_session
 
 
 class ServerFactory(SQLAlchemyModelFactory):

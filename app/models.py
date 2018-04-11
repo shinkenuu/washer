@@ -22,9 +22,8 @@ class Server(Base):
     def all_credentials_available_to_vote(self):
         return sorted(
             [c for c in self.all_able_to_vote_credentials
-             if c.last_vote_datime > c.last_vote_datime - timedelta(days=1)],
-            key=lambda c: c.last_vote_datime,
-            reverse=True)
+             if datetime.utcnow() > c.last_vote_datetime + timedelta(hours=12)],
+            key=lambda c: c.last_vote_datetime)
 
 
 class Credential(Base):
