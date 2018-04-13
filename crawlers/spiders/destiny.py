@@ -1,22 +1,11 @@
 from scrapy import FormRequest, Spider, Request
 
+from crawlers.spiders import WasherSpider
 from crawlers.exceptions import LoginFailed, UnableToVote
 
 
-class DestinySpider(Spider):
+class DestinySpider(WasherSpider):
     name = 'destiny'
-
-    def __init__(self, credential: dict, urls: dict, **kwargs):
-        if {'username', 'password'} > set(credential.keys()):
-            raise ValueError('Invalid credentials dict')
-
-        if {'login', 'vote'} > set(urls.keys()):
-            raise ValueError('Invalid urls dict')
-
-        self.credential = credential
-        self.urls = urls
-
-        super().__init__(**kwargs)
 
     @staticmethod
     def is_logged_in(response):
@@ -41,7 +30,7 @@ class DestinySpider(Spider):
         return False
 
     def start_requests(self):
-        yield Request(url=self.urls['login'], callback=self.login)
+        yield Request(url='{}/login'.format(self.server.base_url), callback=self.login)
 
     def login(self, response):
         """
@@ -59,9 +48,9 @@ class DestinySpider(Spider):
 
     def login_callback(self, response):
         if not self.is_logged_in(response):
-            raise LoginFailed(server_name='destiny', username=self.credential['username'])
+            raise LoginFailed(server_name=self.server.name, username=self.credential.username)
 
-        return Request(url=self.urls['vote'], callback=self.vote)
+        return Request(url='{}/vote'.format(self.server.base_url), callback=self.vote)
 
     def vote(self, response):
         """
@@ -70,7 +59,7 @@ class DestinySpider(Spider):
         :return: a generator with a FormRequest for each available vote form
         """
         if not self.can_vote(response):
-            raise UnableToVote(server_name='destiny', username=self.credential['username'])
+            raise UnableToVote(server_name=self.server.name, username=self.credential.username)
 
         forms_kwargs = []
 

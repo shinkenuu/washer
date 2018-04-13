@@ -5,7 +5,7 @@ from os import environ
 from mock import mock
 
 from app import app
-from app.database import db_session
+from database import db_session
 from crawlers.exceptions import LoginFailed, UnableToVote
 from tests.app.fixtures import CredentialFactory, ServerFactory
 

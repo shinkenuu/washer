@@ -2,7 +2,7 @@ from datetime import datetime
 
 from freezegun import freeze_time
 
-from app.database import db_session
+from database import db_session
 from tests.app.fixtures import CredentialFactory, ServerFactory
 
 
