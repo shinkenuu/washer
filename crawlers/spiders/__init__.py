@@ -1,6 +1,6 @@
 from scrapy import Spider
 
-from models import Server
+from database.models import Server
 
 
 class WasherSpider(Spider):

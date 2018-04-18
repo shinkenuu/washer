@@ -3,7 +3,7 @@ from datetime import datetime
 from factory import SubFactory, Sequence
 from factory.alchemy import SQLAlchemyModelFactory
 
-from models import Credential, Server
+from database.models import Credential, Server
 from database import db_session
 
 
