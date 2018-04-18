@@ -1,6 +1,7 @@
 from datetime import datetime
+import logging
 
-from scrapy import FormRequest, Request, log
+from scrapy import FormRequest, Request
 
 from crawlers.spiders import WasherSpider
 from crawlers.exceptions import LoginFailed, UnableToVote, VoteFailed
@@ -87,7 +88,7 @@ class DestinySpider(WasherSpider):
 
     def vote_callback(self, response):
         if response.status == 200 and self.server.base_url not in response.url:
-            log.msg('Vote successful for username {} at {}'.format(self.credential.username, self.server.name))
+            logging.log('Vote successful for username {} at {}'.format(self.credential.username, self.server.name))
 
             self.credential.last_vote_datetime = datetime.utcnow()
             db_session.add(self.credential)

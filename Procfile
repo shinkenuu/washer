@@ -1,1 +1,1 @@
-
+worker: scrapy list
