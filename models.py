@@ -25,6 +25,10 @@ class Server(Base):
              if datetime.utcnow() > c.last_vote_datetime + timedelta(hours=12)],
             key=lambda c: c.last_vote_datetime)
 
+    @property
+    def next_credential_to_vote(self):
+        return self.all_credentials_available_to_vote[0]
+
 
 class Credential(Base):
     __tablename__ = 'credential'
@@ -37,13 +41,3 @@ class Credential(Base):
 
     server_id = Column(Integer, ForeignKey('server.id'), nullable=False)
     server = relationship('Server', backref='credentials')
-
-    def serialize(self):
-        return str(
-            {
-                'username': self.username,
-                'able_to_vote': 'true' if self.able_to_vote else 'false',
-                'last_vote_datetime': self.last_vote_datetime.strftime('yyyy-MM-dd'),
-                'server': self.server.name
-            }
-        )

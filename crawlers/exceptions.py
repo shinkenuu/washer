@@ -13,3 +13,8 @@ class UnableToVote(CrawlerException):
 class LoginFailed(CrawlerException):
     def __str__(self):
         return 'Unable to log in server {} with username {}'.format(self.server_name, self.username)
+
+
+class VoteFailed(CrawlerException):
+    def __str__(self):
+        return 'Failed voting in server {} with username {}'.format(self.server_name, self.username)

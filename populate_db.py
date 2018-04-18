@@ -10,7 +10,7 @@ COMMON_CREDENTIAL_KWARGS = {
 }
 
 
-DESTINY_SERVER = Server(name='destiny', base_url='http://mapledestiny.net/')
+DESTINY_SERVER = Server(name='destiny', base_url='http://mapledestiny.net')
 
 DESTINY_CREDENTIALS = [
     Credential(username='8balls', password='ehnoiscarai', server=DESTINY_SERVER, **COMMON_CREDENTIAL_KWARGS),

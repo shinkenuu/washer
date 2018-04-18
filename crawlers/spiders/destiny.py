@@ -1,7 +1,10 @@
-from scrapy import FormRequest, Spider, Request
+from datetime import datetime
+
+from scrapy import FormRequest, Request, log
 
 from crawlers.spiders import WasherSpider
-from crawlers.exceptions import LoginFailed, UnableToVote
+from crawlers.exceptions import LoginFailed, UnableToVote, VoteFailed
+from database import db_session
 
 
 class DestinySpider(WasherSpider):
@@ -40,7 +43,7 @@ class DestinySpider(WasherSpider):
         """
         form_kwargs = {
             'formxpath': '//form[@class="form-signin"]',
-            'formdata': self.credential,
+            'formdata': {'username': self.credential.username, 'password': self.credential.password},
             'clickdata': {'type': 'submit'}
         }
 
@@ -83,8 +86,13 @@ class DestinySpider(WasherSpider):
             yield FormRequest.from_response(response, callback=self.vote_callback, **form_kwargs)
 
     def vote_callback(self, response):
-        if response.status == 200:
-            print('Vote successful')
+        if response.status == 200 and self.server.base_url not in response.url:
+            log.msg('Vote successful for username {} at {}'.format(self.credential.username, self.server.name))
+
+            self.credential.last_vote_datetime = datetime.utcnow()
+            db_session.add(self.credential)
+            db_session.commit()
+
             return
 
-        raise Exception('Vote failed')
+        raise VoteFailed(server_name=self.server.name, username=self.credential.username)
