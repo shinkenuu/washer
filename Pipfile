@@ -44,6 +44,8 @@ SQLAlchemy = "==1.2.6"
 Twisted = "==17.9.0"
 
 [dev-packages]
+"psycopg2" = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.6"
