@@ -54,7 +54,8 @@ def test_vote_without_available_site(destiny_spider_fixture):
     vote_disabled_response = create_spider_response('vote_disabled.html')
 
     try:
-        [_ for _ in destiny_spider_fixture.vote(vote_disabled_response)]
+        for _ in destiny_spider_fixture.vote(vote_disabled_response):
+            pass
         assert False
     except UnableToVote:
         assert True
