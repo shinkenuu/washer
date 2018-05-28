@@ -1,3 +1,4 @@
+import mock
 import pytest
 
 from crawlers.exceptions import LoginFailed, UnableToVote
@@ -12,25 +13,39 @@ def create_spider_response(html_filename, url=None):
 def destiny_spider_fixture():
     from crawlers.spiders.destiny import DestinySpider
 
-    urls = {
-        'login': 'http://www.site.net/login',
-        'vote': 'http://www.site.net/vote'
+    mocked_json_data = {
+        'servers': [
+            {
+                'name': 'destiny',
+                'base_url': 'http://www.site.net',
+                'credentials': [
+                    {
+                        'username': 'username_entered',
+                        'password': 'password_entered',
+                        'able_to_vote': True,
+                        'last_vote_datetime': '2017-03-01 00:01:02',
+                    },
+                    {
+                        'username': 'username_just_voted',
+                        'password': 'password_just_voted',
+                        'able_to_vote': True,
+                        'last_vote_datetime': '2018-05-31 19:31:02',
+                    }
+                ]
+            }
+        ]
     }
 
-    credential = {
-        'username': 'username_entered',
-        'password': 'password_entered'
-    }
-
-    return DestinySpider(credential=credential, urls=urls)
+    with mock.patch.object(DestinySpider, 'read_from_json', return_value=mocked_json_data) as mocked_read_from_json:
+        return DestinySpider()
 
 
 def test_login_form_request(destiny_spider_fixture):
     login_form_request = destiny_spider_fixture.login(create_spider_response('login.html'))
 
     expected_body = b'csrfmiddlewaretoken=aEYzKfMkUg8jLFCDr5LcpjAzxclaRx5C' + \
-        b'&username=' + bytes(destiny_spider_fixture.credential['username'], 'utf-8') + \
-        b'&password=' + bytes(destiny_spider_fixture.credential['password'], 'utf-8')
+        b'&username=' + bytes(destiny_spider_fixture.credential.username, 'utf-8') + \
+        b'&password=' + bytes(destiny_spider_fixture.credential.password, 'utf-8')
 
     assert login_form_request.body == expected_body
 
