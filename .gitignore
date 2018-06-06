@@ -1,5 +1,4 @@
 .idea/
 *__pycache__*
 .pytest_cache/
-tests/*
 servers_and_credentials.json
