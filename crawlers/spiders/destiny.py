@@ -90,7 +90,7 @@ class DestinySpider(WasherSpider):
             logging.info('Vote successful for username {} at {}'.format(self.credential.username, self.server.name))
 
             self.credential.last_vote_datetime = datetime.utcnow()
-            self.write_to_json()
+            self.write_dict_to_json(self.schema)
 
             return
 

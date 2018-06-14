@@ -6,22 +6,24 @@ from schemas import WasherSchema
 
 
 class WasherSpider(Spider):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, json_schema_filepath=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        json_data_read = self.read_from_json()
-        self.json_data = WasherSchema(**json_data_read)
+        self.json_schema_filepath = json_schema_filepath or './servers_and_credentials.json'
 
-        self.server = next((server for server in self.json_data.servers if server.name == self.name), None)
+        json_read = self.read_dict_from_json()
+        self.schema = WasherSchema(**json_read)
+
+        self.server = next((server for server in self.schema.servers if server.name == self.name), None)
         self.credential = self.next_credential_to_vote()
 
-    def read_from_json(self, json_file_path='servers_and_credentials.json'):
-        with open(json_file_path, 'r') as json_file:
+    def read_dict_from_json(self):
+        with open(self.json_schema_filepath, 'r') as json_file:
             return json.load(json_file)
 
-    def write_to_json(self, json_file_path='servers_and_credentials.json'):
-        with open(json_file_path, 'w') as json_file:
-            return json.dump(dict(self.json_data), json_file)
+    def write_dict_to_json(self, content: dict):
+        with open(self.json_schema_filepath, 'w') as json_file:
+            return json.dump(content, json_file)
 
     def next_credential_to_vote(self):
         return min(

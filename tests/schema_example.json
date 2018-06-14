@@ -1,0 +1,22 @@
+{
+  "servers": [
+    {
+      "name": "fake",
+      "base_url": "http://fake.net",
+      "credentials" : [
+        {
+          "username": "user1",
+          "password": "secret1",
+          "able_to_vote": true,
+          "last_vote_datetime": "2018-03-01 00:01:02"
+        },
+        {
+          "username": "user2",
+          "password": "secret2",
+          "able_to_vote": true,
+          "last_vote_datetime": "2018-02-01 00:01:02"
+        }
+      ]
+    }
+  ]
+}

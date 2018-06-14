@@ -1,21 +1,17 @@
 from datetime import datetime
-import json
 
 
 class Schema(object):
-    attributes = []
+    fields = []
 
     def __init__(self, **kwargs):
-        for attr in self.attributes:
-            self.__setattr__(attr, kwargs[attr])
+        for field in self.fields:
+            setattr(self, field, kwargs[field])
 
     def __iter__(self):
-        """
-        Create a formatted ```self``` to a dict with only the attributes of the Schema
-        """
-        for attr in self.attributes:
-            key = attr
-            value = self.__getattribute__(attr)
+        for field in self.fields:
+            key = field
+            value = getattr(self, field)
 
             if isinstance(value, Schema):
                 yield key, dict(value)
@@ -25,27 +21,34 @@ class Schema(object):
 
 
 class CredentialSchema(Schema):
-    attributes = ['username', 'password', 'able_to_vote', 'last_vote_datetime']
+    fields = ['username', 'password', 'able_to_vote', 'last_vote_datetime']
 
     def __init__(self, **kwargs):
-        super(Schema, self).__init__()
-
+        super().__init__(**kwargs)
         self.last_vote_datetime = datetime.strptime(kwargs['last_vote_datetime'], '%Y-%m-%d %H:%M:%S')
 
 
 class ServerSchema(Schema):
-    attributes = ['name', 'base_url', 'credentials']
+    fields = ['name', 'base_url', 'credentials']
 
     def __init__(self, **kwargs):
-        super(Schema, self).__init__()
+        super().__init__(**kwargs)
 
-        self.credentials = [CredentialSchema(**credential_dict) for credential_dict in kwargs['credentials']]
+        credentials_schemas = []
+        for credential in self.credentials:
+            credentials_schemas.append(CredentialSchema(**credential))
+
+        self.credentials = credentials_schemas
 
 
 class WasherSchema(Schema):
-    attributes = ['servers']
+    fields = ['servers']
 
     def __init__(self, **kwargs):
-        super(Schema, self).__init__()
+        super().__init__(**kwargs)
 
-        self.servers = [ServerSchema(**server_dict) for server_dict in kwargs['servers']]
+        servers_schemas = []
+        for server in self.servers:
+            servers_schemas.append(ServerSchema(**server))
+
+        self.servers = servers_schemas

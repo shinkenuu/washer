@@ -1,12 +1,50 @@
+from datetime import datetime
 import pytest
 
-from schemas import Schema
+from schemas import CredentialSchema, ServerSchema, Schema, WasherSchema
+
+CREDENTIAL_SCHEMA = CredentialSchema(**{
+    'username': 'name',
+    'password': 'secret',
+    'able_to_vote': True,
+    'last_vote_datetime': '2018-02-13 14:54:03'
+})
+
+SERVER_SCHEMA = ServerSchema(**{
+    'name': 'site',
+    'base_url': 'www.site.com',
+    'credentials': [
+        {
+            'username': 'name',
+            'password': 'secret',
+            'able_to_vote': True,
+            'last_vote_datetime': '2018-02-13 14:54:03'
+        }
+    ]
+})
+
+WASHER_SCHEMA = WasherSchema(**{
+    'servers': [
+        {
+            'name': 'site',
+            'base_url': 'www.site.com',
+            'credentials': [
+                {
+                    'username': 'name',
+                    'password': 'secret',
+                    'able_to_vote': True,
+                    'last_vote_datetime': '2018-02-13 14:54:03'
+                }
+            ]
+        }
+    ]
+})
 
 
 @pytest.fixture
 def schema_fixture():
     class FakeSchema(Schema):
-        attributes = ['key1', 'key2', 'key3']
+        fields = ['key1', 'key2', 'key3']
 
     return FakeSchema(
         key1='value1',
@@ -36,3 +74,18 @@ def test_formatting(schema_fixture):
     }
 
     assert dict(schema_fixture) == expected_dict
+
+
+def test_credential_schema():
+    for key, value in dict(CREDENTIAL_SCHEMA).items():
+        assert CREDENTIAL_SCHEMA.__getattribute__(key) == value
+
+
+def test_server_schema():
+    for key, value in dict(SERVER_SCHEMA).items():
+        assert SERVER_SCHEMA.__getattribute__(key) == value
+
+
+def test_washer_schema():
+    for key, value in dict(WASHER_SCHEMA).items():
+        assert WASHER_SCHEMA.__getattribute__(key) == value

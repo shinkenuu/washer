@@ -36,7 +36,7 @@ def destiny_spider_fixture():
         ]
     }
 
-    with mock.patch.object(DestinySpider, 'read_from_json', return_value=mocked_json_data) as mocked_read_from_json:
+    with mock.patch.object(DestinySpider, 'read_dict_from_json', return_value=mocked_json_data) as _:
         return DestinySpider()
 
 
