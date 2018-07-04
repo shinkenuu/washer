@@ -1,54 +1,58 @@
-from datetime import datetime
+from abc import ABC, abstractmethod
 
+from utils import datetime_to_json_datetime, json_datetime_to_datetime
 
-class Schema(object):
-    fields = []
+class Schema(ABC):
+    @abstractmethod
+    def to_dict(self):
+        """
+        Create a dict with data equivalent to the Schema.
 
-    def __init__(self, **kwargs):
-        for field in self.fields:
-            setattr(self, field, kwargs[field])
+        Used to store data into JSON files.
+        """
+        return {}
 
     def __iter__(self):
-        for field in self.fields:
-            key = field
-            value = getattr(self, field)
-
-            if isinstance(value, Schema):
-                yield key, dict(value)
-                continue
-
+        self_dict = self.to_dict()
+        for key, value in self_dict.items():
             yield key, value
 
 
 class CredentialSchema(Schema):
-    fields = ['username', 'password', 'able_to_vote', 'last_vote_datetime']
+    def __init__(self, username, password, able_to_vote, last_vote_datetime):
+        self.username = username
+        self.password = password
+        self.able_to_vote = able_to_vote
+        self.last_vote_datetime = json_datetime_to_datetime(last_vote_datetime)
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.last_vote_datetime = datetime.strptime(kwargs['last_vote_datetime'], '%Y-%m-%d %H:%M:%S')
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'password': self.password,
+            'able_to_vote': self.able_to_vote,
+            'last_vote_datetime': datetime_to_json_datetime(self.last_vote_datetime)
+        }
 
 
 class ServerSchema(Schema):
-    fields = ['name', 'base_url', 'credentials']
+    def __init__(self, name, base_url, credentials):
+        self.name = name
+        self.base_url = base_url
+        self.credentials = [CredentialSchema(**credential) for credential in credentials]
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        credentials_schemas = []
-        for credential in self.credentials:
-            credentials_schemas.append(CredentialSchema(**credential))
-
-        self.credentials = credentials_schemas
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'base_url': self.base_url,
+            'credentials': [credential.to_dict() for credential in self.credentials]
+        }
 
 
 class WasherSchema(Schema):
-    fields = ['servers']
+    def __init__(self, servers):
+        self.servers = [ServerSchema(**server) for server in servers]
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        servers_schemas = []
-        for server in self.servers:
-            servers_schemas.append(ServerSchema(**server))
-
-        self.servers = servers_schemas
+    def to_dict(self):
+        return {
+            'servers': [server.to_dict() for server in self.servers]
+        }
