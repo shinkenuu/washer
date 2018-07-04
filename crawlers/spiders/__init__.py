@@ -23,7 +23,7 @@ class WasherSpider(Spider):
 
     def write_dict_to_json(self, content: dict):
         with open(self.json_schema_filepath, 'w') as json_file:
-            return json.dump(content, json_file)
+            return json.dump(content, json_file, indent=4, sort_keys=True)
 
     def next_credential_to_vote(self):
         return min(
