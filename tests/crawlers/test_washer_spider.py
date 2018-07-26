@@ -5,7 +5,6 @@ import pytest
 from shutil import copyfile
 
 from crawlers.spiders import WasherSpider
-from utils import datetime_to_json_datetime, json_datetime_to_datetime
 
 from tests.test_schemas import WASHER_DICT
 
@@ -32,9 +31,7 @@ def test_washer_initialization(mocked_washer_read_from_dict, washer_spider_fixtu
 
     latest_to_vote_credential = fake_spider_server['credentials'][0].copy()
     last_vote_datetime = latest_to_vote_credential['last_vote_datetime']
-    last_vote_datetime = json_datetime_to_datetime(last_vote_datetime)
     last_vote_datetime -= timedelta(days=1)
-    last_vote_datetime = datetime_to_json_datetime(last_vote_datetime)
     fake_spider_server['credentials'].append(latest_to_vote_credential)
 
     mocked_washer_read_from_dict.return_value = washer_schema_dict
