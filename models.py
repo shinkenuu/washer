@@ -16,20 +16,19 @@ session = Session()
 class Credential(Base):
     __tablename__ = 'credential'
 
-    id = Column(Integer, primary_key=True)
-    username = Column(String, index=True)
-    password = Column(String)
-    able_to_vote = Column(Boolean)
-    last_vote_datetime = Column(DateTime, index=True)
+    id = Column(Integer, primary_key=True, index=True, nullable=False)
+    username = Column(String, index=True, nullable=False)
+    password = Column(String, nullable=False)
+    able_to_vote = Column(Boolean, index=True, nullable=False)
+    last_vote_datetime = Column(DateTime, index=True, nullable=False)
 
-    server_id = Column(Integer, ForeignKey('server.id'))
+    server_id = Column(Integer, ForeignKey('server.id'), nullable=False)
+    server = relationship('Server', backref='credentials')
 
 
 class Server(Base):
     __tablename__ = 'server'
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String, index=True)
-    host = Column(String)
-
-    credentials = relationship('Credential', backref='server')
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String, index=True, nullable=False)
+    host = Column(String, nullable=False)
