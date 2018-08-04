@@ -33,7 +33,7 @@ class DestinySpider(WasherSpider):
         return False
 
     def start_requests(self):
-        yield Request(url='{}/login'.format(self.server.base_url), callback=self.login)
+        yield Request(url='{}/login/'.format(self.server.host), callback=self.login)
 
     def login(self, response):
         """
@@ -53,7 +53,7 @@ class DestinySpider(WasherSpider):
         if not self.is_logged_in(response):
             raise LoginFailed(server_name=self.server.name, username=self.credential.username)
 
-        return Request(url='{}/vote'.format(self.server.base_url), callback=self.vote)
+        return Request(url='{}/vote/'.format(self.server.host), callback=self.vote)
 
     def vote(self, response):
         """
@@ -64,33 +64,21 @@ class DestinySpider(WasherSpider):
         if not self.can_vote(response):
             raise UnableToVote(server_name=self.server.name, username=self.credential.username)
 
-        forms_kwargs = []
+        if response.xpath('//input[@value="Vote on Gtop100 (6k NX)"]'):
+            form_kwarg = {
+                'formnumber': 0,
+                'clickdata': {'value': 'Vote on Gtop100 (6k NX)'}
+            }
 
-        if response.xpath('//input[@value="Vote on Gtop100 (4k NX)"]'):
-            forms_kwargs.append(
-                {
-                    'formnumber': 0,
-                    'clickdata': {'value': 'Vote on Gtop100 (4k NX)'}
-                }
-            )
+            return FormRequest.from_response(response, callback=self.vote_callback, **form_kwarg)
 
-        if response.xpath('//input[@value="Vote on UltimatePS (2k NX)"]'):
-            forms_kwargs.append(
-                {
-                    'formnumber': 1,
-                    'clickdata': {'value': 'Vote on UltimatePS (2k NX)'}
-                }
-            )
-
-        for form_kwargs in forms_kwargs:
-            yield FormRequest.from_response(response, callback=self.vote_callback, **form_kwargs)
+        raise VoteFailed(server_name=self.server.name, username=self.credential.username)
 
     def vote_callback(self, response):
-        if response.status == 200 and self.server.base_url not in response.url:
+        if response.status == 200 and self.server.host not in response.url:
             logging.info('Vote successful for username {} at {}'.format(self.credential.username, self.server.name))
 
-            self.credential.last_vote_datetime = datetime.utcnow()
-            self.write_dict_to_json(self.schema.to_dict())
+            self.record_voting(self.credential, datetime.utcnow())
 
             return
 
