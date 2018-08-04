@@ -1,1 +1,1 @@
-web: gunicorn run:app --log-file -
+worker: scrapy crawl destiny
